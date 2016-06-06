@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
 """
 This file serves the ConceptNet 5 JSON API, by connecting to a SQLite
 index of all of ConceptNet 5.
 """
-from __future__ import unicode_literals, print_function
-
 import sys
 import os
 import flask
@@ -20,7 +17,6 @@ from conceptnet5.json_rendering import jsonify, highlight_and_link_json
 
 ### Configuration ###
 
-API_URL = '/data/5.4'
 WORKING_DIR = os.getcwd()
 STATIC_PATH = os.environ.get('CONCEPTNET_WEB_STATIC', os.path.join(WORKING_DIR, 'static'))
 TEMPLATE_PATH = os.environ.get('CONCEPTNET_WEB_TEMPLATES', os.path.join(WORKING_DIR, 'templates'))
@@ -33,7 +29,7 @@ app = flask.Flask(
     static_folder=STATIC_PATH
 )
 app.config['JSON_AS_ASCII'] = False
-app.jinja_env.filters['highlight_json'] = highlight_and_link_json(API_URL)
+app.jinja_env.filters['highlight_json'] = highlight_and_link_json
 app.jinja_env.add_extension('jinja2_highlight.HighlightExtension')
 limiter = Limiter(app, global_limits=["600 per minute", "6000 per hour"])
 CORS(app)
@@ -54,7 +50,7 @@ def configure_api(db_path, assertion_dir, assoc_dir=None, nshards=8):
 ### API endpoints ###
 
 # Lookup: match any path starting with /a/, /c/, /d/, /r/, or /s/
-@app.route(API_URL + '/<any(a, c, d, r, s):top>/<path:query>')
+@app.route('/<any(a, c, d, r, s):top>/<path:query>')
 def query_node(top, query):
     req_args = flask.request.args
     path = '/%s/%s' % (top, query.strip('/'))
@@ -72,7 +68,7 @@ def query_node(top, query):
         return jsonify({'edges': results, 'numFound': len(results)})
 
 
-@app.route(API_URL + '/search')
+@app.route('/search')
 def search():
     criteria = {}
     offset = int(flask.request.args.get('offset', 0))
@@ -86,9 +82,9 @@ def search():
     return jsonify({'edges': results, 'numFound': len(results)})
 
 
-@app.route(API_URL + '/uri')
-@app.route(API_URL + '/normalize')
-@app.route(API_URL + '/standardize')
+@app.route('/uri')
+@app.route('/normalize')
+@app.route('/standardize')
 def standardize_uri():
     """
     Look up the URI for a given piece of text. 'text' and 'language' should be
@@ -106,7 +102,7 @@ def standardize_uri():
     return flask.jsonify(uri=uri)
 
 
-@app.route(API_URL + '/')
+@app.route('/')
 def see_documentation():
     """
     This function redirects to the api documentation
@@ -114,7 +110,7 @@ def see_documentation():
     return flask.redirect('https://github.com/commonsense/conceptnet5/wiki/API')
 
 
-@app.route(API_URL + '/assoc/list/<lang>/<path:termlist>')
+@app.route('/assoc/list/<lang>/<path:termlist>')
 @limiter.limit("60 per minute")
 def list_assoc(lang, termlist):
     if isinstance(termlist, bytes):
@@ -144,7 +140,7 @@ def assoc_for_termlist(terms):
     return flask.jsonify({'terms': terms, 'similar': similar})
 
 
-@app.route(API_URL + '/assoc/<path:uri>')
+@app.route('/assoc/<path:uri>')
 @limiter.limit("60 per minute")
 def concept_assoc(uri):
     uri = '/' + uri.rstrip('/')
