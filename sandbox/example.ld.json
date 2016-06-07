@@ -34,7 +34,7 @@
       "@type": "rdf:Statement",
       "rdfs:comment": "When you look up a node, its 'edges' property is a list of its incoming and outgoing edges."
     },
-    "text": {
+    "label": {
       "@id": "rdfs:label",
       "@type": "xsd:string",
       "rdfs:comment": "The natural language text that corresponds to a node. The @value of this object is the actual text, and the @language is its language code."
@@ -60,8 +60,8 @@
     }
   },
   "@id": "/c/en/test",
-  "text": {
-    "@value": "test",
+  "label": {
+    "@value": "Test",
     "@language": "en"
   },
   "edges": [
