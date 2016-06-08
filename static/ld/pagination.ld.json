@@ -1,10 +1,8 @@
 {
   "@context": {
-    "@base": "http://api.conceptnet.io/",
-    "cn5": "http://api.conceptnet.io/",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "comment": "rdfs:comment",
-    "pages": "http://api.conceptnet.io/meta/conceptnet5.5/pagination.ld.json#",
+    "pages": "http://api.conceptnet.io/ld/conceptnet5.5/pagination.ld.json#",
     "view": {
       "@id": "pages:view",
       "comment": "Indicates that the returned API result is a paginated view, and tells you where to find the first, next, and previous pages of the view."

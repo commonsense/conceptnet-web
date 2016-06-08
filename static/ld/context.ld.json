@@ -5,8 +5,8 @@
   "dc:creator": "rspeer@luminoso.com",
   "vann:preferredNamespacePrefix": "cn",
   "@context": {
-    "@base": "http://api.conceptnet.io/meta/conceptnet5.5/context.ld.json",
-    "cn": "http://api.conceptnet.io/meta/conceptnet5.5/context.ld.json#",
+    "@base": "http://api.conceptnet.io/ld/conceptnet5.5/context.ld.json",
+    "cn": "http://api.conceptnet.io/ld/conceptnet5.5/context.ld.json#",
     "cnapi": "http://api.conceptnet.io/",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
