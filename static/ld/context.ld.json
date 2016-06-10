@@ -15,6 +15,11 @@
     "cc": "http://creativecommons.org/licenses/",
     "vann": "http://purl.org/vocab/vann/",
     "comment": "rdfs:comment",
+    "uri": {
+      "@id": "cn:uri",
+      "@type": "@id",
+      "comment": "The URI of an edge is a slash-separated path that contains the information that fundamentally defines it -- its start, end, and relation. This serves as its @id for Linked Data purposes, so in practice, the 'uri' and '@id' fields will be equal, and you should probably be looking up the '@id' instead from now on. If you object that this URI should technically be called an IRI: yes, but also technically, according to WHAT-WG, nobody cares. This field exists for backward compatibility anyway, and you don't get backward compatibility by changing the terminology all the time."
+    },
     "rel": {
       "@id": "rdf:predicate",
       "@type": "@id",
@@ -30,22 +35,37 @@
       "@type": "@id",
       "comment": "The 'end' property labels the node that this edge points to. This is the same as RDF's notion of an 'object'."
     },
+    "node": {
+      "@id": "cn:node",
+      "@type": "@id",
+      "comment": "Features built from symmetric relations don't have to specify the 'start' or 'end'. Instead, they can just specify 'node', which matches either."
+    },
+    "symmetric": {
+      "@id": "cn:symmetric",
+      "@type": "xsd:boolean",
+      "comment": "A relation, feature, or assertion can be 'symmetric', indicating that it doesn't matter which node is the 'start' or 'end'."
+    },
     "weight": {
       "@id": "cn:weight",
       "@type": "xsd:float",
       "comment": "A numerical value indicating how strongly one should believe the statement this edge makes."
     },
     "edges": {
-      "@id": "cn:edges",
+      "@id": "cn:edge",
       "@container": "@set",
       "@type": "rdf:Statement",
       "comment": "When you look up a node, its 'edges' property is a list of its incoming and outgoing edges."
     },
+    "features": {
+      "@id": "cn:feature",
+      "@container": "@set",
+      "comment": "A feature selects edges that match a particular two of 'rel', 'start', and 'end' (or 'rel' and 'node', which covers both 'start' and 'end'). For example, 'parts of a car' (with rel=/r/PartOf and end=/c/en/car) is a feature."
+    },
     "sources": {
-      "@id": "cn:sources",
+      "@id": "cn:source",
       "@container": "@set",
       "@type": "@id",
-      "comment": "A set of independent sources that are reasons we believe this assertion."
+      "comment": "The 'sources' of an edge are a set of independent reasons we believe this assertion."
     },
     "dataset": {
       "@id": "cn:dataset",

@@ -1,27 +1,21 @@
 """
-This file serves the ConceptNet 5 JSON API, by connecting to a SQLite
-index of all of ConceptNet 5.
+This file sets up Flask to serve the ConceptNet 5 API in JSON-LD format.
 """
-import sys
-import os
+from conceptnet_web.json_rendering import jsonify, highlight_and_link_json
+from conceptnet_web import responses
+from conceptnet_web.responses import FINDER, VALID_KEYS
 import flask
 from flask_cors import CORS
 from flask_limiter import Limiter
-from conceptnet5 import __version__ as VERSION
-from conceptnet5.nodes import standardized_concept_uri
-from conceptnet5.query import AssertionFinder, VALID_KEYS
-from conceptnet5.assoc_query import AssocSpaceWrapper, MissingAssocSpace, get_assoc_data
-from conceptnet5.util import get_data_filename, get_support_data_filename
-from conceptnet5.json_rendering import jsonify, highlight_and_link_json
+import os
+# TODO: vector wrapper
 
 
-### Configuration ###
+# Configuration
 
 WORKING_DIR = os.getcwd()
 STATIC_PATH = os.environ.get('CONCEPTNET_WEB_STATIC', os.path.join(WORKING_DIR, 'static'))
 TEMPLATE_PATH = os.environ.get('CONCEPTNET_WEB_TEMPLATES', os.path.join(WORKING_DIR, 'templates'))
-
-FINDER, ASSOC_WRAPPER = get_assoc_data('assoc-space-%s' % VERSION)
 
 app = flask.Flask(
     'conceptnet5',
@@ -35,20 +29,6 @@ limiter = Limiter(app, global_limits=["600 per minute", "6000 per hour"])
 CORS(app)
 
 
-def configure_api(db_path, assertion_dir, assoc_dir=None, nshards=8):
-    """
-    Override the usual AssertionFinder with a new one, possibly with different
-    settings. Do the same for the assoc_dir if given.
-
-    This is useful for testing.
-    """
-    global FINDER, ASSOC_WRAPPER
-    FINDER = AssertionFinder(db_path, assertion_dir, nshards)
-    ASSOC_WRAPPER = AssocSpaceWrapper(assoc_dir, FINDER)
-
-
-### API endpoints ###
-
 # Lookup: match any path starting with /a/, /c/, /d/, /r/, or /s/
 @app.route('/<any(a, c, d, r, s):top>/<path:query>')
 def query_node(top, query):
@@ -61,15 +41,15 @@ def query_node(top, query):
     grouped = req_args.get('grouped', 'false').lower() == 'true'
     if grouped:
         limit = min(limit, 100)
-        results = FINDER.lookup_grouped_by_feature(path, offset=offset, group_limit=limit)
-        return jsonify({'groups': results})
+        results = responses.lookup_grouped_by_feature(FINDER, path, group_limit=limit)
     else:
-        results = list(FINDER.lookup(path, offset=offset, limit=limit))
-        return jsonify({'edges': results, 'numFound': len(results)})
+        results = responses.lookup_paginated(FINDER, path, offset=offset, limit=limit)
+    return jsonify(results)
 
 
 @app.route('/search')
-def search():
+@app.route('/query')
+def query():
     criteria = {}
     offset = int(flask.request.args.get('offset', 0))
     offset = max(0, offset)
@@ -78,8 +58,8 @@ def search():
     for key in flask.request.args:
         if key in VALID_KEYS:
             criteria[key] = flask.request.args[key]
-    results = list(FINDER.query(criteria, limit=limit, offset=offset))
-    return jsonify({'edges': results, 'numFound': len(results)})
+    results = query_paginated(FINDER, criteria, offset=offset, limit=limit)
+    return jsonify(results)
 
 
 @app.route('/uri')
@@ -92,14 +72,7 @@ def standardize_uri():
     """
     language = flask.request.args.get('language')
     text = flask.request.args.get('text') or flask.request.args.get('term')
-    if text is None or language is None:
-        return flask.jsonify({
-            'error': 'Invalid request',
-            'details': "You should include the 'text' and 'language' parameters"
-        }), 400
-    text = text.replace('_', ' ')
-    uri = standardized_concept_uri(language, text)
-    return flask.jsonify(uri=uri)
+    return jsonify(standardize_uri(language, text))
 
 
 @app.route('/')
@@ -107,7 +80,9 @@ def see_documentation():
     """
     This function redirects to the api documentation
     """
-    return flask.redirect('https://github.com/commonsense/conceptnet5/wiki/API')
+    return jsonify({
+        '@context': responses.CONTEXT
+    })
 
 
 @app.route('/assoc/list/<lang>/<path:termlist>')

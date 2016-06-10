@@ -6,21 +6,21 @@
             font-size: 20px;
         }
         body {
-            font-family: "Droid Sans", Helvetica, Arial, sans-serif;
-            background-color: #fff;
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
         }
         div.feature-box {
             display: inline-block;
-            background-color: #eee;
             width: 16em;
+            padding: 1em;
         }
         div.feature-box .box-top {
             box-sizing: border-box;
             width: 100%;
-            background-color: #36a;
-            color: #fff;
-            padding: 0.25em;
-            font-weight: bold;
+            color: #36a;
+            font-size: 24px;
+            font-weight: normal;
         }
         div.feature-box ul {
             padding-left: 1em;
@@ -46,10 +46,30 @@
             text-align: center;
             border-radius: 0.3em;
         }
+
+        /* The default color scheme for a language not covered here */
         span.language {
             background-color: #fff;
             color: #888;
         }
+
+        /* We're going to represent every language with an icon, made of its
+           IETF language code in a particular color scheme. I hope this
+           is more acceptable than the practice of using flags of particular
+           *countries* as language icons.
+
+           Now, although we're not using flags themselves, it is true that
+           flags are where most of these colors come from.
+
+           In many cases, the colors for a language are inspired by common
+           colors in the flags of the countries, regions, or cultures that do
+           speak that language. To be honest, the colors are also influenced
+           somewhat by color schemes from Civilization 5.
+
+           But I also have taken some liberties to account for languages
+           spoken in multiple countries that might not necessarily get
+           along, and to work around the fact that like half the flags are
+           red, white, and blue. */
         .lang-en span.language {
             background-color: #22a;
             color: #fff;
@@ -100,7 +120,6 @@
         }
 
         /* Historical languages get sepia backgrounds */
-        /* Latin: imperial purple */
         .lang-la span.language {
             background-color: #edc;
             color: #94d;
@@ -167,11 +186,16 @@
             background-color: #44b;
             color: #ddf;
         }
+        .lang-vo span.language {
+            background-color: #bb4;
+            color: #ffb;
+        }
         .lang-jbo span.language {
             background-color: #f84;
             color: #fdb;
         }
 
+        /* A bunch more languages that we have reasonable support for */
         .lang-af span.language {
             background-color: #000;
             color: #1c4;
@@ -325,6 +349,10 @@
         }
         /* Serbo-Croatian gets an arbitrary color scheme */
         .lang-sh span.language {
+            background-color: #74c;
+            color: #ddd;
+        }
+        .lang-hbs span.language {
             background-color: #74c;
             color: #ddd;
         }
