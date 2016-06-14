@@ -9,8 +9,8 @@ import json
 
 def request_wants_json():
     best = flask.request.accept_mimetypes \
-        .best_match(['application/json', 'text/html'])
-    return best == 'application/json'
+        .best_match(['application/ld+json', 'application/json', 'text/html'])
+    return 'json' in best
 
 
 def highlight_and_link_json(content):

@@ -1,6 +1,6 @@
 {
   "@id": "cn:",
-  "rdfs:comment": "Hey, you've found the JSON-LD context for ConceptNet. This file defines everything that appears in ConceptNet API responses, mostly for the benefit of software that understands JSON-LD, but I hope it's reasonably human-readable too. See http://www.conceptnet.io for more information about ConceptNet, http://api.conceptnet.io/docs for the API documentation, or http://json-ld.org/ for an introduction to JSON-LD.",
+  "rdfs:comment": "Hey, you've found the JSON-LD context for ConceptNet. This file defines everything that appears in ConceptNet API responses, mostly for the benefit of software that understands JSON-LD, but it may be reasonably human-readable too. See http://www.conceptnet.io for more information about ConceptNet, http://api.conceptnet.io/docs for the API documentation, or http://json-ld.org/ for an introduction to JSON-LD.",
   "vann:usageNote": "http://api.conceptnet.io/docs",
   "dc:creator": "rspeer@luminoso.com",
   "vann:preferredNamespacePrefix": "cn",
@@ -18,7 +18,7 @@
     "uri": {
       "@id": "cn:uri",
       "@type": "@id",
-      "comment": "The URI of an edge is a slash-separated path that contains the information that fundamentally defines it -- its start, end, and relation. This serves as its @id for Linked Data purposes, so in practice, the 'uri' and '@id' fields will be equal, and you should probably be looking up the '@id' instead from now on. If you object that this URI should technically be called an IRI: yes, but also technically, according to WHAT-WG, nobody cares. This field exists for backward compatibility anyway, and you don't get backward compatibility by changing the terminology all the time."
+      "comment": "The URI of an edge is a slash-separated path that contains the information that fundamentally defines it -- its start, end, and relation. This serves as its @id for Linked Data purposes, so in practice, the 'uri' and '@id' fields will be equal, and you should probably be looking up the '@id' instead from now on. If you're pedantic, by 'URI' we actually mean 'IRI'. If you're not pedantic, by 'URI' we actually mean 'URL'."
     },
     "rel": {
       "@id": "rdf:predicate",
