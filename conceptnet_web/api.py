@@ -3,7 +3,7 @@ This file sets up Flask to serve the ConceptNet 5 API in JSON-LD format.
 """
 from conceptnet_web.json_rendering import jsonify, highlight_and_link_json
 from conceptnet_web import responses
-from conceptnet_web.responses import FINDER, VALID_KEYS
+from conceptnet_web.responses import VALID_KEYS
 import flask
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -29,21 +29,28 @@ limiter = Limiter(app, global_limits=["600 per minute", "6000 per hour"])
 CORS(app)
 
 
+def get_int(args, key, default, minimum, maximum):
+    strvalue = args.get(key, default)
+    try:
+        value = int(strvalue)
+    except ValueError:
+        value = default
+    return max(minimum, min(maximum, value))
+
+
 # Lookup: match any path starting with /a/, /c/, /d/, /r/, or /s/
 @app.route('/<any(a, c, d, r, s):top>/<path:query>')
 def query_node(top, query):
     req_args = flask.request.args
     path = '/%s/%s' % (top, query.strip('/'))
-    offset = int(req_args.get('offset', 0))
-    offset = max(0, offset)
-    limit = int(req_args.get('limit', 50))
-    limit = max(0, min(limit, 1000))
+    offset = get_int(req_args, 'offset', 0, 0, 100000)
+    limit = get_int(req_args, 'limit', 50, 0, 1000)
     grouped = req_args.get('grouped', 'false').lower() == 'true'
     if grouped:
         limit = min(limit, 100)
-        results = responses.lookup_grouped_by_feature(FINDER, path, group_limit=limit)
+        results = responses.lookup_grouped_by_feature(path, group_limit=limit)
     else:
-        results = responses.lookup_paginated(FINDER, path, offset=offset, limit=limit)
+        results = responses.lookup_paginated(path, offset=offset, limit=limit)
     return jsonify(results)
 
 
@@ -51,14 +58,12 @@ def query_node(top, query):
 @app.route('/query')
 def query():
     criteria = {}
-    offset = int(flask.request.args.get('offset', 0))
-    offset = max(0, offset)
-    limit = int(flask.request.args.get('limit', 50))
-    limit = max(0, min(limit, 1000))
+    offset = get_int(req_args, 'offset', 0, 0, 100000)
+    limit = get_int(req_args, 'limit', 50, 0, 1000)
     for key in flask.request.args:
         if key in VALID_KEYS:
             criteria[key] = flask.request.args[key]
-    results = query_paginated(FINDER, criteria, offset=offset, limit=limit)
+    results = responses.query_paginated(criteria, offset=offset, limit=limit)
     return jsonify(results)
 
 
@@ -85,41 +90,15 @@ def see_documentation():
     })
 
 
-@app.route('/assoc/list/<lang>/<path:termlist>')
+@app.route('/related/<path:uri>')
 @limiter.limit("60 per minute")
-def list_assoc(lang, termlist):
-    if isinstance(termlist, bytes):
-        termlist = termlist.decode('utf-8')
-
-    terms = []
-    term_pieces = termlist.split(',')
-    for piece in term_pieces:
-        piece = piece.strip()
-        if '@' in piece:
-            term, weight = piece.split('@')
-            weight = float(weight)
-        else:
-            term = piece
-            weight = 1.
-        terms.append(('/c/%s/%s' % (lang, term), weight))
-
-    return assoc_for_termlist(terms)
-
-
-def assoc_for_termlist(terms):
-    limit = flask.request.args.get('limit', '20')
-    limit = max(0, min(int(limit), 1000))
-    filter = flask.request.args.get('filter')
-
-    similar = ASSOC_WRAPPER.associations(terms, filter=filter, limit=limit)
-    return flask.jsonify({'terms': terms, 'similar': similar})
-
-
-@app.route('/assoc/<path:uri>')
-@limiter.limit("60 per minute")
-def concept_assoc(uri):
-    uri = '/' + uri.rstrip('/')
-    return assoc_for_termlist([(uri, 1.0)])
+def query_related(uri):
+    req_args = flask.request.args
+    uri = '/' + uri.rstrip('/ ')
+    limit = get_int(req_args, 'limit', 50, 0, 100)
+    filter = req_args.get('filter')
+    results = responses.query_related(uri, filter=filter, limit=limit)
+    return jsonify(results)
 
 
 if __name__ == '__main__':
