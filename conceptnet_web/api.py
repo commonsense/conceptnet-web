@@ -70,7 +70,7 @@ def query():
 @app.route('/uri')
 @app.route('/normalize')
 @app.route('/standardize')
-def standardize_uri():
+def query_standardize_uri():
     """
     Look up the URI for a given piece of text. 'text' and 'language' should be
     given as parameters.
@@ -92,7 +92,7 @@ def see_documentation():
 
 @app.route('/related/<path:uri>')
 @limiter.limit("60 per minute")
-def query_related(uri):
+def query_top_related(uri):
     req_args = flask.request.args
     uri = '/' + uri.rstrip('/ ')
     limit = get_int(req_args, 'limit', 50, 0, 100)
