@@ -1,0 +1,5 @@
+- Fix footer
+- Fix duplication (why does it happen?)
+- Finnish language color scheme is missing
+- Something goes wrong with /c/en/comparison/n/wn/act
+- Implement lookups that aren't nodes

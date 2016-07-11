@@ -15,7 +15,9 @@ def describe_term_language(lang, description_language='en'):
     else:
         article = 'A'
 
-    content = '{article} <a href="/c/{lang}">{language_name}</a> term'
+    content = '{article} <a href="/c/{lang}">{language_name}</a> term'.format(
+        article=article, lang=lang, language_name=language_name
+    )
     return Markup(content)
 
 

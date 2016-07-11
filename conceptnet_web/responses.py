@@ -74,6 +74,21 @@ def make_paginated_view(url, params, offset, limit, more):
     return pager
 
 
+def transform_directed_edge(edge, node):
+    if field_match(edge['start']['@id'], node):
+        edge['node'] = edge['start']
+        edge['other'] = edge['end']
+    elif field_match(edge['end']['@id'], node):
+        edge['node'] = edge['end']
+        edge['other'] = edge['start']
+    else:
+        raise ValueError(
+            "Neither the start nor end of this edge matches "
+            "the node %r: %r" % (node, edge)
+        )
+    return edge
+
+
 def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
     """
     Given a query for a concept, return assertions about that concept grouped by
@@ -92,20 +107,20 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
 
     for assertion in FINDER.lookup(term, limit=scan_limit):
         groupkeys = []
-        start = uri_prefix(assertion['start'])
-        rel = assertion['rel']
-        end = uri_prefix(assertion['end'])
+        start = uri_prefix(assertion['start']['@id'])
+        rel = assertion['rel']['@id']
+        end = uri_prefix(assertion['end']['@id'])
         symmetric = rel in SYMMETRIC_RELATIONS
         if symmetric:
             groupkeys.append((('rel', rel), ('node', uri_prefix(term))))
         else:
-            if field_match(assertion['start'], term):
+            if field_match(assertion['start']['@id'], term):
                 groupkeys.append((('rel', rel), ('start', start)))
-            if field_match(assertion['end'], term):
+            if field_match(assertion['end']['@id'], term):
                 groupkeys.append((('rel', rel), ('end', end)))
         for groupkey in groupkeys:
             if len(groups[groupkey]) < group_limit:
-                groups[groupkey].append(assertion)
+                groups[groupkey].append(transform_directed_edge(assertion, term))
             else:
                 more.add(groupkey)
 
@@ -116,7 +131,7 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
                 # TODO: alternate between features when there are
                 # multiple possibilities?
                 for assertion in FINDER.lookup(feature, limit=num_more):
-                    groups[groupkey].append(assertion)
+                    groups[groupkey].append(transform_directed_edge(assertion, term))
 
     grouped = []
     for groupkey in groups:
@@ -127,32 +142,13 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
         group = {
             '@id': url,
             'weight': sum(assertion['weight'] for assertion in assertions),
+            'feature': dict(groupkey),
             'edges': assertions,
             'symmetric': symmetric
         }
         if groupkey in more:
             view = make_paginated_view(base_url, groupkey, 0, group_limit, more=True)
             group['view'] = view
-        for assertion in assertions:
-            if field_match(assertion['start'], term):
-                assertion['node'] = assertion['start']
-                assertion['other'] = assertion['end']
-                if 'surfaceStart' in assertion:
-                    assertion['surfaceNode'] = assertion['surfaceStart']
-                if 'surfaceEnd' in assertion:
-                    assertion['surfaceOther'] = assertion['surfaceEnd']
-            elif field_match(assertion['end'], term):
-                assertion['node'] = assertion['end']
-                assertion['other'] = assertion['start']
-                if 'surfaceEnd' in assertion:
-                    assertion['surfaceNode'] = assertion['surfaceEnd']
-                if 'surfaceStart' in assertion:
-                    assertion['surfaceOther'] = assertion['surfaceStart']
-            else:
-                raise ValueError(
-                    "Neither the start nor end of this edge matches "
-                    "the node %r: %r" % (term, assertion)
-                )
 
         grouped.append(group)
 

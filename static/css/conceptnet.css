@@ -437,3 +437,9 @@ span.language {
     background-color: #fff;
     color: #f93;
 }
+
+/* Not a language, but indicates a link to another resource */
+.lang-link span.language {
+    background-color: #ff7;
+    color: #000;
+}

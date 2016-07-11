@@ -36,5 +36,6 @@ REL_HEADINGS = {
         '/r/Uses': ['Things that use {0}', '{0} uses…'],
         '/r/ControlledBy': ['{0} controls…', '{0} is controlled by…'],
         '/r/LocatedNear': ['Things located near {0}', '{0} is near…'],
+        '/r/ExternalURL': ['Links to ConceptNet', 'Links to other sites'],
     }
 }

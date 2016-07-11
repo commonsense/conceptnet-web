@@ -14,6 +14,7 @@
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "cc": "http://creativecommons.org/licenses/",
     "vann": "http://purl.org/vocab/vann/",
+    "lang": "http://www.lexvo.org/id/code/",
     "comment": "rdfs:comment",
     "uri": {
       "@id": "cn:uri",

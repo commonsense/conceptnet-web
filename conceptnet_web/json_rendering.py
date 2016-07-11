@@ -30,10 +30,11 @@ def regex_replacement_stack(replacements):
 
 
 # These replacers convert absolute and relative URLs into links, and convert
-# URIs in the cc: namespace to the full URLs of Creative Commons licenses.
+# URIs in the cc: or lang: namespace to full URLs.
 linker = regex_replacement_stack([
     (r'&quot;((https?://|/[acdrs]/)([^& ]|&amp;)*)&quot;', r'&quot;<a href="\1">\1</a>&quot;'),
-    (r'&quot;cc:([^& ]+)&quot;', r'&quot;<a href="http://creativecommons.org/licenses/\1">cc:\1</a>&quot;')
+    (r'&quot;cc:([^& ]+)&quot;', r'&quot;<a href="http://creativecommons.org/licenses/\1">cc:\1</a>&quot;'),
+    (r'&quot;lang:([^& ]+)&quot;', r'&quot;<a href="http://www.lexvo.org/page/code/\1">cc:\1</a>&quot;')
 ])
 
 

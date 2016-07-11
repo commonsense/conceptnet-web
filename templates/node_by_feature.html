@@ -5,12 +5,9 @@
 {% block content %}
 <div id="main">
     <div class="header">
-        <h1 class="term lang-{{term.lang}}">
-            <span class="language">{{term.lang}}</span>
-            {{term.label}}
-        </h1>
+        {{ show_term(term, 'h1') }}
         <h2 class="term-subtitle">
-            {{term.lang|describe_term_language}} in
+            {{term.language|describe_term_language}} in
             <a href="/" class="version">ConceptNet 5.5</a>
         </h2>
     </div>
@@ -24,11 +21,7 @@
                     </h2>
                     <ul>
                         {% for edge in feat.edges %}
-                        <li class="term lang-{{edge.other.lang}}">
-                            <a href="{{edge.other.uri}}">
-                                {{edge.other.label}}
-                            </a>
-                        </li>
+                            {{ show_term(edge['other']) }}
                         {% endfor %}
                     </ul>
                 </div>
