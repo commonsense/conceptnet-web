@@ -8,12 +8,19 @@ import json
 
 
 def request_wants_json():
+    """
+    Determine from the request headers whether this is a Web browser that wants
+    pretty rendering, or an API user that wants actual JSON-LD.
+    """
     best = flask.request.accept_mimetypes \
         .best_match(['application/ld+json', 'application/json', 'text/html'])
     return 'json' in best
 
 
 def regex_replacement_stack(replacements):
+    """
+    Make a function that applies a sequence of regex replacements to text.
+    """
     compiled_replacers = [(re.compile(match), replace) for (match, replace) in replacements]
     def _replace(text):
         for compiled_re, replacement in compiled_replacers:
@@ -22,15 +29,18 @@ def regex_replacement_stack(replacements):
     return _replace
 
 
+# These replacers convert absolute and relative URLs into links, and convert
+# URIs in the cc: namespace to the full URLs of Creative Commons licenses.
 linker = regex_replacement_stack([
-    (r'/l/CC/By-SA', r'cc:by-sa/4.0'),
-    (r'/l/CC/By', r'cc:by/4.0'),
     (r'&quot;((https?://|/[acdrs]/)([^& ]|&amp;)*)&quot;', r'&quot;<a href="\1">\1</a>&quot;'),
     (r'&quot;cc:([^& ]+)&quot;', r'&quot;<a href="http://creativecommons.org/licenses/\1">cc:\1</a>&quot;')
 ])
 
 
 def highlight_and_link_json(content):
+    """
+    Given JSON text, syntax-highlight it and convert URLs to links.
+    """
     formatter = HtmlFormatter()
     lexer = get_lexer_by_name('json')
     html = highlight(content, lexer, formatter)
@@ -39,6 +49,11 @@ def highlight_and_link_json(content):
 
 
 def jsonify(obj):
+    """
+    Our custom method for returning JSON, which either provides the raw JSON
+    or fills in an HTML template with pretty, syntax-highlighted, linked JSON,
+    depending on the requested content type.
+    """
     if flask.request is None or request_wants_json():
         return flask.Response(
             json.dumps(obj, ensure_ascii=False, sort_keys=True),
@@ -52,4 +67,3 @@ def jsonify(obj):
             json=pretty_json,
             json_raw=ugly_json
         )
-
