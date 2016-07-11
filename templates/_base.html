@@ -1,63 +1,31 @@
-<!DOCTYPE HTML>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<link href="{{url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{url_for('static', filename='css/conceptnet.css')}}" rel="stylesheet" type="text/css" />
-
-{% block title %}
-<title>ConceptNet 5</title>
-{% endblock %}
-
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/pure-min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/conceptnet.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/grids-responsive-min.css')}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block title %}
+    <title>ConceptNet 5</title>
+    {% endblock %}
 </head>
+
 <body>
-<!-- top navigation bar -->
-<div class="navbar">
-  <div class="navbar-inner">
-    <div class="container-fluid">
-      <div class="brand"><a href="/">ConceptNet <span class='five'>5</span></a></div>
-        <ul class="nav">
-          <li><a href="http://conceptnet5.media.mit.edu">About</a></li>
-        </ul>
-        <ul class="nav">
-          <li><a href="http://github.com/commonsense/conceptnet5/wiki">Wiki</a></li>
-        </ul>
-        <ul class="nav">
-          <li><a href="http://conceptnet5.media.mit.edu/downloads/current">Downloads</a></li>
-        </ul>
-<form id="search-form-home" class="navbar-form pull-right" method="POST" action="/web/search">
-        <input id="search-text" type="text" class="search-query span2" name="keyword" title="Search for a concept..." placeholder="Search for a concept..." />
-        <select id="language-select" name="language" title="Select a language">
-          {% for langcode, langname in languages %}
-            {% if langname == "English" %}
-              <option selected="selected" value={{ langcode }}>{{ langname }}</option>
-            {% else %}
-              <option value={{ langcode }}>{{ langname }}</option>
-            {% endif %}
-          {% endfor %}
-        </select>
-        <input id="search-submit" type="submit" value="Search" />
-</form>
 
-    </div>
-  </div>
-</div>
-
-<div class="column">
-<div class="content">
-<div class="container">
 {% block content %}
 {% endblock %}
-</div>
-</div>
+
+<div class="creative-commons">
+  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
+  </a>
+  <br />
+  ConceptNet 5 is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  Portions are also available under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br />
+  See <a href="https://github.com/commonsense/conceptnet5/wiki/Copying-and-sharing-ConceptNet">Copying and Sharing ConceptNet</a> for more details.
 </div>
 
-<div class="creative-commons" style="margin: 1em;">
-<a href="https://github.com/commonsense/conceptnet5/wiki/Copying-and-sharing-ConceptNet">
-<img src="/static/img/cc.primary.srr.gif" alt="Creative Commons - some rights reserved">
-</a>
-</div>
-
-{% block scripts %}
-{% endblock %}
 </body>
 </html>

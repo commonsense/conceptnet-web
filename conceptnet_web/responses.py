@@ -133,6 +133,27 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
         if groupkey in more:
             view = make_paginated_view(base_url, groupkey, 0, group_limit, more=True)
             group['view'] = view
+        for assertion in assertions:
+            if field_match(assertion['start'], term):
+                assertion['node'] = assertion['start']
+                assertion['other'] = assertion['end']
+                if 'surfaceStart' in assertion:
+                    assertion['surfaceNode'] = assertion['surfaceStart']
+                if 'surfaceEnd' in assertion:
+                    assertion['surfaceOther'] = assertion['surfaceEnd']
+            elif field_match(assertion['end'], term):
+                assertion['node'] = assertion['end']
+                assertion['other'] = assertion['start']
+                if 'surfaceEnd' in assertion:
+                    assertion['surfaceNode'] = assertion['surfaceEnd']
+                if 'surfaceStart' in assertion:
+                    assertion['surfaceOther'] = assertion['surfaceStart']
+            else:
+                raise ValueError(
+                    "Neither the start nor end of this edge matches "
+                    "the node %r: %r" % (term, assertion)
+                )
+
         grouped.append(group)
 
     grouped.sort(key=lambda g: -g['weight'])

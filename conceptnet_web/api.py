@@ -4,6 +4,7 @@ This file sets up Flask to serve the ConceptNet 5 API in JSON-LD format.
 from conceptnet_web.json_rendering import jsonify, highlight_and_link_json
 from conceptnet_web import responses
 from conceptnet_web.responses import VALID_KEYS
+from conceptnet_web.filters import FILTERS
 import flask
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -23,7 +24,8 @@ app = flask.Flask(
     static_folder=STATIC_PATH
 )
 app.config['JSON_AS_ASCII'] = False
-app.jinja_env.filters['highlight_json'] = highlight_and_link_json
+for filter_name, filter_func in FILTERS.items():
+    app.jinja_env.filters[filter_name] = filter_func
 app.jinja_env.add_extension('jinja2_highlight.HighlightExtension')
 limiter = Limiter(app, global_limits=["600 per minute", "6000 per hour"])
 CORS(app)
