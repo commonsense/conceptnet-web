@@ -105,6 +105,7 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
             'Only concept nodes (starting with /c/) can be grouped by feature.'
         )
 
+    seen_assertions = set()
     for assertion in FINDER.lookup(term, limit=scan_limit):
         groupkeys = []
         start = uri_prefix(assertion['start']['@id'])
@@ -121,6 +122,7 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
         for groupkey in groupkeys:
             if len(groups[groupkey]) < group_limit:
                 groups[groupkey].append(transform_directed_edge(assertion, term))
+                seen_assertions.add(assertion['@id'])
             else:
                 more.add(groupkey)
 
@@ -131,7 +133,9 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
                 # TODO: alternate between features when there are
                 # multiple possibilities?
                 for assertion in FINDER.lookup(feature, limit=num_more):
-                    groups[groupkey].append(transform_directed_edge(assertion, term))
+                    if assertion['@id'] not in seen_assertions:
+                        groups[groupkey].append(transform_directed_edge(assertion, term))
+                        seen_assertions.add(assertion['@id'])
 
     grouped = []
     for groupkey in groups:
