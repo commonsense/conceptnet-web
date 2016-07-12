@@ -25,13 +25,12 @@ a {
 /* This was .grids-example on purecss.io */
 .rel-grid {
     background: #f4f4f4;
-    margin: 2em auto;
+    margin-top: 2em;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
 .content {
     margin: 0 auto;
-    margin-bottom: 50px;
 }
 
 .header {
@@ -39,19 +38,30 @@ a {
      color: #333;
      padding: 2.5em 2em 0;
  }
-    .header h1 {
-        margin: 0.2em 0;
-        font-size: 2.5em;
-    }
-     .header h2 {
-        color: #777;
-        padding: 0;
-        margin-top: 0;
-    }
-    .header .term-subtitle {
-        font-weight: normal;
-        font-size: 1em;
-    }
+.header h1 {
+    margin: 0.2em 0;
+    font-size: 2.5em;
+}
+.header h2 {
+    color: #777;
+    padding: 0;
+    margin-top: 0;
+}
+.header .term-subtitle {
+    font-weight: normal;
+    font-size: 1em;
+}
+.footer {
+    background-color: #555;
+    color: #fff;
+    margin: 0;
+    padding: 1em;
+    font-size: 1rem;
+}
+
+.footer a {
+    color: #cde;
+}
 
 div.feature-box {
     padding: 0.1em 1em 0.1em 1em;
