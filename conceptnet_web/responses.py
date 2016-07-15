@@ -3,6 +3,7 @@ from conceptnet5.query import field_match, VALID_KEYS
 from conceptnet5.relations import SYMMETRIC_RELATIONS
 from conceptnet5.uri import uri_prefix
 from conceptnet5.nodes import standardized_concept_uri
+from conceptnet5.nodes import ld_node
 from collections import defaultdict
 import itertools
 
@@ -89,7 +90,7 @@ def transform_directed_edge(edge, node):
     return edge
 
 
-def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
+def lookup_grouped_by_feature(term, scan_limit=500, group_limit=10):
     """
     Given a query for a concept, return assertions about that concept grouped by
     their features (for example, "A dog wants to ..." could be a group).
@@ -105,7 +106,7 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
             'Only concept nodes (starting with /c/) can be grouped by feature.'
         )
 
-    seen_assertions = set()
+    seen_targets = set()
     for assertion in FINDER.lookup(term, limit=scan_limit):
         groupkeys = []
         start = uri_prefix(assertion['start']['@id'])
@@ -121,8 +122,11 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
                 groupkeys.append((('rel', rel), ('end', end)))
         for groupkey in groupkeys:
             if len(groups[groupkey]) < group_limit:
-                groups[groupkey].append(transform_directed_edge(assertion, term))
-                seen_assertions.add(assertion['@id'])
+                directed = transform_directed_edge(assertion, term)
+                target = (groupkey, directed['other']['@id'])
+                if target not in seen_targets:
+                    groups[groupkey].append(directed)
+                seen_targets.add(target)
             else:
                 more.add(groupkey)
 
@@ -133,9 +137,14 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
                 # TODO: alternate between features when there are
                 # multiple possibilities?
                 for assertion in FINDER.lookup(feature, limit=num_more):
-                    if assertion['@id'] not in seen_assertions:
-                        groups[groupkey].append(transform_directed_edge(assertion, term))
-                        seen_assertions.add(assertion['@id'])
+                    if len(groups[groupkey]) >= group_limit:
+                        break
+                    if field_match(assertion['start'], term) or field_match(assertion['end'], term):
+                        directed = transform_directed_edge(assertion, term)
+                        target = (groupkey, directed['other']['@id'])
+                        if target not in seen_targets:
+                            groups[groupkey].append(directed)
+                        seen_targets.add(target)
 
     grouped = []
     for groupkey in groups:
@@ -160,13 +169,11 @@ def lookup_grouped_by_feature(term, scan_limit=200, group_limit=10):
     for group in grouped:
         del group['weight']
 
-    response = {
-        '@id': term,
-        'features': grouped
-    }
+    response = ld_node(term)
     if not grouped:
         return error(response, 404, '%r is not a node in ConceptNet.' % term)
     else:
+        response['features'] = grouped
         return success(response)
 
 
@@ -232,7 +239,7 @@ def query_paginated(query, offset=0, limit=50):
     found = FINDER.query(query, limit=limit + 1, offset=offset, scan_limit=limit * 4)
     edges = found[:limit]
     response = {
-        '@id': make_query_url('/query', query),
+        '@id': make_query_url('/query', query.items()),
         'edges': edges
     }
     more = len(found) > len(edges)

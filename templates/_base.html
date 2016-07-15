@@ -1,20 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-{% macro show_term(term, tag='li') %}
-<{{tag}} class="term lang-{{term.language or 'none'}}">
-    <span class="language">
-    {% if term.site %}
-        {{term.site}}
-    {% else %}
-        {{term.language}}
-    {% endif %}
-    </span>
-    <a href="{{term['@id']}}">
-        {{term.label}}
-    </a>
-</{{tag}}>
-{% endmacro %}
     <meta charset="utf-8">
     <link rel="stylesheet" href="{{url_for('static', filename='css/pure-min.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/conceptnet.css')}}">

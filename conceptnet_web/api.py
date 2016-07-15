@@ -46,7 +46,7 @@ def query_node(top, query):
     req_args = flask.request.args
     path = '/%s/%s' % (top, query.strip('/'))
     offset = get_int(req_args, 'offset', 0, 0, 100000)
-    limit = get_int(req_args, 'limit', 50, 0, 1000)
+    limit = get_int(req_args, 'limit', 20, 0, 1000)
     grouped = req_args.get('grouped', 'false').lower() == 'true'
     if grouped:
         limit = min(limit, 100)

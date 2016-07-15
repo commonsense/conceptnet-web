@@ -1,4 +1,4 @@
-- Fix duplication when different senses are involved
-- Finnish language color scheme is missing
-- Something goes wrong with /c/en/comparison/n/wn/act
-- Implement lookups that aren't nodes (including /query)
+- Intersperse results or something for symmetrical features
+- Better page for feature queries
+- Pagination on list pages
+- 404s don't work
