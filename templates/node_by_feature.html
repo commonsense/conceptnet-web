@@ -29,7 +29,7 @@
                         {% endfor %}
                         {% if feat.view %}
                         <li class="more">
-                            <a href="{{feat.view.firstPage}}">More »</a>
+                            <a href="{{term['@id']}}?rel={{feat.feature.rel}}&limit=1000">More »</a>
                         </li>
                         {% endif %}
                     </ul>

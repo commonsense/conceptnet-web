@@ -90,7 +90,7 @@ def transform_directed_edge(edge, node):
     return edge
 
 
-def lookup_grouped_by_feature(term, scan_limit=500, group_limit=10):
+def lookup_grouped_by_feature(term, filters=None, scan_limit=1000, group_limit=10):
     """
     Given a query for a concept, return assertions about that concept grouped by
     their features (for example, "A dog wants to ..." could be a group).
@@ -107,7 +107,10 @@ def lookup_grouped_by_feature(term, scan_limit=500, group_limit=10):
         )
 
     seen_targets = set()
-    for assertion in FINDER.lookup(term, limit=scan_limit):
+    query = {'node': term}
+    if filters is not None:
+        query.update(filters)
+    for assertion in FINDER.query(query, limit=scan_limit):
         groupkeys = []
         start = uri_prefix(assertion['start']['@id'])
         rel = assertion['rel']['@id']
@@ -145,6 +148,9 @@ def lookup_grouped_by_feature(term, scan_limit=500, group_limit=10):
                         if target not in seen_targets:
                             groups[groupkey].append(directed)
                         seen_targets.add(target)
+        if len(groups[groupkey]) == group_limit:
+            more.add(groupkey)
+
 
     grouped = []
     for groupkey in groups:

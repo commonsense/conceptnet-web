@@ -43,8 +43,12 @@ def get_int(args, key, default, minimum, maximum):
 def browse_concept(uri):
     req_args = flask.request.args
     concept = '/c/%s' % uri
-    limit = get_int(req_args, 'limit', 20, 0, 100)
-    results = responses.lookup_grouped_by_feature(concept, group_limit=limit)
+    limit = get_int(req_args, 'limit', 20, 0, 1000)
+    filters = {}
+    for key in VALID_KEYS:
+        if key != 'node' and key in req_args:
+            filters[key] = req_args[key]
+    results = responses.lookup_grouped_by_feature(concept, filters, group_limit=limit)
     sources = []
     for feature in results['features']:
         rel = feature['feature']['rel']
@@ -74,8 +78,11 @@ def browse_node(top, query):
     offset = get_int(req_args, 'offset', 0, 0, 100000)
     limit = get_int(req_args, 'limit', 50, 0, 1000)
     results = responses.lookup_paginated(path, offset=offset, limit=limit)
+    sources = []
+    for edge in results['edges']:
+        sources.extend(edge['sources'])
     return flask.render_template(
-        'edge_list.html', results=results
+        'edge_list.html', results=results, sources=sources
     )
 
 
@@ -89,8 +96,11 @@ def query():
         if key in VALID_KEYS:
             criteria[key] = flask.request.args[key]
     results = responses.query_paginated(criteria, offset=offset, limit=limit)
+    sources = []
+    for edge in results['edges']:
+        sources.extend(edge['sources'])
     return flask.render_template(
-        'edge_list.html', results=results
+        'edge_list.html', results=results, sources=sources
     )
 
 
