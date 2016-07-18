@@ -21,6 +21,23 @@
         </div>
     </div>
     <div class="content">
+        {% if results.view %}
+        <div class="pagination">
+            {% if results.view.previousPage %}
+            <a class="pure-button" href="{{ results.view.previousPage }}">
+                ← Previous
+            </a>
+            {% endif %}
+            <span class="pagination-counter">
+                Results {{ pageStart }}–{{ pageEnd }}
+            </span>
+            {% if results.view.nextPage %}
+            <a class="pure-button" href="{{ results.view.nextPage }}">
+                Next →
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
         <div class="edge-list">
             <table class="edge-table">
                 {% for edge in results.edges %}
@@ -28,6 +45,23 @@
                 {% endfor %}
             </table>
         </div>
+        {% if results.view %}
+        <div class="pagination">
+            {% if results.view.previousPage %}
+            <a class="pure-button" href="{{ results.view.previousPage }}">
+                ← Previous
+            </a>
+            {% endif %}
+            <span class="pagination-counter">
+                Results {{ pageStart }}–{{ pageEnd }}
+            </span>
+            {% if results.view.nextPage %}
+            <a class="pure-button" href="{{ results.view.nextPage }}">
+                Next →
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

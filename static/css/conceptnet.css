@@ -118,6 +118,15 @@ div.feature-box h2 {
     font-size: 0.8rem;
 }
 
+/* Pagination */
+.pagination {
+    text-align: center;
+    margin: 1em;
+}
+.pagination-counter {
+    padding: 1em;
+}
+
 .term span.language {
     /* This font size is relative to the parent font size. All other
         em units in this block are relative to this. */

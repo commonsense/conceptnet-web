@@ -5,6 +5,7 @@ from conceptnet_web import responses
 from conceptnet_web.filters import FILTERS
 from conceptnet_web.relations import REL_HEADINGS
 from conceptnet_web.responses import VALID_KEYS
+from conceptnet5.uri import split_uri
 import flask
 from flask_limiter import Limiter
 import os
@@ -43,6 +44,9 @@ def get_int(args, key, default, minimum, maximum):
 def browse_concept(uri):
     req_args = flask.request.args
     concept = '/c/%s' % uri
+    pieces = split_uri(concept)
+    if len(pieces) <= 2:
+        return browse_node('c', pieces[1])
     limit = get_int(req_args, 'limit', 20, 0, 1000)
     filters = {}
     for key in VALID_KEYS:
@@ -78,11 +82,14 @@ def browse_node(top, query):
     offset = get_int(req_args, 'offset', 0, 0, 100000)
     limit = get_int(req_args, 'limit', 50, 0, 1000)
     results = responses.lookup_paginated(path, offset=offset, limit=limit)
+    pageStart = offset + 1
+    pageEnd = offset + max(1, min(limit, len(results['edges'])))
     sources = []
     for edge in results['edges']:
         sources.extend(edge['sources'])
     return flask.render_template(
-        'edge_list.html', results=results, sources=sources
+        'edge_list.html', results=results, sources=sources,
+        pageStart=pageStart, pageEnd=pageEnd
     )
 
 

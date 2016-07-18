@@ -1,4 +1,2 @@
 - Intersperse results or something for symmetrical features
-- Better page for feature queries
-- Pagination on list pages
 - 404s don't work
