@@ -1,0 +1,70 @@
+{% block title %}
+ConceptNet
+{% endblock title %}
+
+{% block content %}
+<div class="header">
+<h1>ConceptNet</h1>
+<h2 class="subtitle">An open, multilingual knowledge graph</h2>
+
+<strong>ConceptNet</strong> is a freely-available semantic network, designed to help
+computers understand the meanings of words that people use. It originated from
+the crowdsourcing project Open Mind Common Sense, which was launched in 1999.
+It has since grown to include knowledge from other crowdsourced resources,
+expert-created resources, and games with a purpose.
+
+<h2>Examples</h2>
+<p>To explore what's in ConceptNet, try browsing what it knows about any of these terms:</p>
+
+<ul>
+<li class="term lang-en"><span class="language">en</span> <a href="/c/en/word">word</a></li>
+<li class="term lang-fr"><span class="language">fr</span> <a href="/c/fr/mot">mot</a></li>
+<li class="term lang-nl"><span class="language">nl</span> <a href="/c/nl/woord">woord</a></li>
+<li class="term lang-es"><span class="language">es</span> <a href="/c/es/palabra">palabra</a></li>
+<li class="term lang-pt"><span class="language">pt</span> <a href="/c/pt/palavra">palavra</a></li>
+<li class="term lang-ja"><span class="language">ja</span> <a href="/c/ja/単語">単語</a></li>
+<li class="term lang-en"><span class="language">en</span> <a href="/c/en/large">large</a></li>
+<li class="term lang-en"><span class="language">en</span> <a href="/c/en/semantic_network">semantic network</a></li>
+<li class="term lang-en"><span class="language">en</span> <a href="/c/en/marvin_minsky">Marvin Minsky</a></li>
+</ul>
+
+<h2>ConceptNet in context</h2>
+
+<h3>Linked Open Data</h3>
+
+<p>ConceptNet is a proud part of the ecosystem of <a
+href="http://linkeddata.org/">Linked Open Data</a>. You can use <a
+href="/r/ExternalURL">ExternalURL</a> links in ConceptNet to find the same
+terms in other vocabularies, such as WordNet, DBPedia, and OpenCyc, which can
+provide you with other forms of information.</p>
+
+<p>As a modern Linked Open Data resource, the data in ConceptNet is available
+in a <a href="http://json-ld.org/">JSON-LD</a> API, a format that aims to make
+linked data easy to understand and easy to work with. If you don't care what
+JSON-LD is, it's just a JSON REST API with some extra metadata.</p>
+
+<p>For information on how to use the ConceptNet API, see the
+<a href="https://github.com/commonsense/conceptnet5/wiki/API">API documentation</a>.
+Or just <a href="//api.conceptnet.io/c/en/example">start browsing it</a> and
+you'll probably figure it out.</p>
+
+<h3>Word embeddings</h3>
+
+<p>ConceptNet is not just a set of "word embeddings", but it has been used to
+create word embeddings since before they were called that.</p>
+
+<p>Word embeddings represent words of natural language as vectors that come out
+of some machine learning process. Recently, we've been using ConceptNet very
+effectively as a kind of universal glue for embeddings, helping to align word
+embeddings from different sources and in different languages to make a whole
+that is much better tahn the sum of their parts.</p>
+
+<p>If you're excited about word embeddings, take a look at
+<a href="https://github.com/LuminosoInsight/conceptnet-numberbatch">Conceptnet
+Numberbatch</a>, the best word embeddings you can download as of 2016. These
+embeddings significantly outperform well-known embeddings, such as the word2vec
+embeddings (Google News skip-gram embeddings built using word2vec), on all
+evaluations we have tried. So far, they have continued to outperform newly
+published systems of word embeddings.</p>
+
+{% endblock content %}
