@@ -1,2 +1,6 @@
 - Intersperse results or something for symmetrical features
+- Can't do query?rel=/r/ExternalURL&start=/c/en/telephone
 - 404s don't work
+- Language listing
+- Relation listing
+- NotUsedFor has an ugly heading
