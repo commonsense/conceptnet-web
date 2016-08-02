@@ -39,6 +39,18 @@ CONTRIBUTOR_NAME_MAP = {
 }
 
 
+ERROR_NAME_MAP = {
+    400: 'Bad request',
+    404: 'Not found',
+    429: 'Too many requests',
+    500: 'Server error'
+}
+
+
+def error_name(code):
+    return ERROR_NAME_MAP.get(code, 'Unknown error %r' % code)
+
+
 def oxford_comma(items):
     if len(items) == 0:
         return ''
@@ -138,5 +150,6 @@ FILTERS = {
     'highlight_json': highlight_and_link_json,
     'describe_term_language': describe_term_language,
     'describe_sources': describe_sources,
-    'describe_sources_brief': describe_sources_brief
+    'describe_sources_brief': describe_sources_brief,
+    'error_name': error_name
 }

@@ -54,6 +54,10 @@ def browse_concept(uri):
             filters[key] = req_args[key]
     results = responses.lookup_grouped_by_feature(concept, filters, group_limit=limit)
     sources = []
+
+    if 'error' in results:
+        return flask.render_template('error.html', error=results['error'])
+
     for feature in results['features']:
         rel = feature['feature']['rel']
         if rel in REL_HEADINGS['en']:
