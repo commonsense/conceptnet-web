@@ -12,6 +12,7 @@ REL_HEADINGS = {
         '/r/AtLocation': ['Things located at {0}', 'Location of {0}'],
         '/r/Causes': ['Causes of {0}', 'Effects of {0}'],
         '/r/UsedFor': ['Things used for {0}', '{0} is used for…'],
+        '/r/NotUsedFor': ['Things that are not used for {0}', '{0} is not used for…'],
         '/r/MotivatedByGoal': ['Things motivated by {0}', '{0} is motivated by…'],
         '/r/HasSubevent': ['Subevents of {0}', '{0} is a subevent of…'],
         '/r/DistinctFrom': ['Distinct terms'],

@@ -9,11 +9,13 @@
         <h1>
             {% if results.edges|length == 1 %}
                 Edge details
+            {% elif results.edges|length == 0 %}
+                No edges found
             {% else %}
                 Edges found
             {% endif %}
         </h1>
-        <h2 class="term-subtitle">
+        <h2 class="subtitle">
             Results from <a href="/" class="version">ConceptNet 5.5</a>
         </h2>
         <div class="sources">

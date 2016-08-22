@@ -46,7 +46,7 @@ a {
     padding: 0;
     margin-top: 0;
 }
-.header .term-subtitle {
+.header .subtitle {
     font-weight: normal;
     font-size: 1em;
 }
@@ -116,6 +116,30 @@ div.feature-box h2 {
 }
 .sources {
     font-size: 0.8rem;
+}
+
+/* Documentation areas */
+.doc {
+    color: #000;
+    font-size: 16px;
+    padding-left: 2.5em;
+    padding-right: 2.5em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.term-examples {
+    font-size: 20px;
+    list-style-type: none;
+}
+
+.svg-container { 
+	display: inline-block;
+	position: relative;
+	width: 100%;
+	padding-bottom: 100%; 
+	vertical-align: middle; 
+	overflow: hidden; 
 }
 
 /* Pagination */

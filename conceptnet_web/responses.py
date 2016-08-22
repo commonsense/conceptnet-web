@@ -176,7 +176,7 @@ def lookup_grouped_by_feature(term, filters=None, scan_limit=1000, group_limit=1
         del group['weight']
 
     response = ld_node(term)
-    if not grouped:
+    if not grouped and filters is None:
         return error(response, 404, '%r is not a node in ConceptNet.' % term)
     else:
         response['features'] = grouped

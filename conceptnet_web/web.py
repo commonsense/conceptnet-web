@@ -38,6 +38,9 @@ def get_int(args, key, default, minimum, maximum):
 
 # Lookup: match any path starting with /a/, /c/, /d/, /r/, or /s/
 # @app.route('/<any(a, c, d, r, s):top>/<path:query>')
+@app.route('/')
+def front_page():
+    return flask.render_template('index.html')
 
 
 @app.route('/c/<path:uri>')
