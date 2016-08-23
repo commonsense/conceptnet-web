@@ -141,6 +141,16 @@ div.feature-box h2 {
 	vertical-align: middle; 
 	overflow: hidden; 
 }
+.graph-edge-label {
+    font-size: 16px;
+    font-family: FreeSerif, 'Times New Roman', serif;
+    font-style: italic;
+}
+.graph-node-label {
+    font-size: 16px;
+    font-family: Helvetica, Arial, sans-serif;
+    text-anchor: middle;
+}
 
 /* Pagination */
 .pagination {
