@@ -21,7 +21,8 @@ setup(
     packages=packages,
     include_package_data=True,
     install_requires=[
-        'limits', 'flask==0.11', 'flask-cors', 'flask-limiter', 'langcodes'
+        'limits', 'flask==0.11', 'flask-cors', 'flask-limiter', 'langcodes',
+        'jinja2-highlight'
     ],
     license = 'Apache License 2.0',
 )
