@@ -1,10 +1,8 @@
 from conceptnet5.vectors.query import VectorSpaceWrapper
 from conceptnet5.query import field_match, VALID_KEYS
-from conceptnet5.relations import SYMMETRIC_RELATIONS
-from conceptnet5.uri import uri_prefix
+from conceptnet5.db.query import MAX_GROUP_SIZE
 from conceptnet5.nodes import standardized_concept_uri
 from conceptnet5.nodes import ld_node
-from collections import defaultdict
 import itertools
 
 VECTORS = VectorSpaceWrapper()
@@ -38,18 +36,14 @@ def make_query_url(url, items):
         return url + '?' + ('&'.join(str_items))
 
 
-def groupkey_to_features(groupkey):
-    groupdict = dict(groupkey)
-    if 'node' in groupdict:
-        return ['{} {} -'.format(groupdict['node'], groupdict['rel']),
-                '- {} {}'.format(groupdict['rel'], groupdict['node'])]
+def groupkey_to_pairs(groupkey, term):
+    direction, rel = groupkey
+    if direction == 1:
+        return [('rel', rel), ('start', term)]
+    elif direction == -1:
+        return [('rel', rel), ('end', term)]
     else:
-        feat = '{} {} {}'.format(
-            groupdict.get('start', '-'),
-            groupdict.get('rel', '-'),
-            groupdict.get('end', '-')
-        )
-        return [feat]
+        return [('rel', rel), ('node', term)]
 
 
 def paginated_url(url, params, offset, limit):
@@ -98,75 +92,29 @@ def lookup_grouped_by_feature(term, filters=None, scan_limit=1000, group_limit=1
     It will scan up to `scan_limit` assertions to find out which features exist,
     then retrieve `group_limit` assertions for each feature if possible.
     """
-    groups = defaultdict(list)
-    more = set()
     if not term.startswith('/c/'):
         return error(
             {}, 400,
             'Only concept nodes (starting with /c/) can be grouped by feature.'
         )
 
-    seen_targets = set()
-    query = {'node': term}
-    if filters is not None:
-        query.update(filters)
-    for assertion in FINDER.query(query, limit=scan_limit):
-        groupkeys = []
-        start = uri_prefix(assertion['start']['@id'])
-        rel = assertion['rel']['@id']
-        end = uri_prefix(assertion['end']['@id'])
-        symmetric = rel in SYMMETRIC_RELATIONS
-        if symmetric:
-            groupkeys.append((('rel', rel), ('node', uri_prefix(term))))
-        else:
-            if field_match(assertion['start']['@id'], term):
-                groupkeys.append((('rel', rel), ('start', start)))
-            if field_match(assertion['end']['@id'], term):
-                groupkeys.append((('rel', rel), ('end', end)))
-        for groupkey in groupkeys:
-            if len(groups[groupkey]) < group_limit:
-                directed = transform_directed_edge(assertion, term)
-                target = (groupkey, directed['other']['@id'])
-                if target not in seen_targets:
-                    groups[groupkey].append(directed)
-                seen_targets.add(target)
-            else:
-                more.add(groupkey)
-
-    for groupkey in groups:
-        if len(groups[groupkey]) < group_limit:
-            num_more = group_limit - len(groups[groupkey])
-            for feature in groupkey_to_features(groupkey):
-                # TODO: alternate between features when there are
-                # multiple possibilities?
-                for assertion in FINDER.lookup(feature, limit=num_more):
-                    if len(groups[groupkey]) >= group_limit:
-                        break
-                    if field_match(assertion['start'], term) or field_match(assertion['end'], term):
-                        directed = transform_directed_edge(assertion, term)
-                        target = (groupkey, directed['other']['@id'])
-                        if target not in seen_targets:
-                            groups[groupkey].append(directed)
-                        seen_targets.add(target)
-        if len(groups[groupkey]) == group_limit:
-            more.add(groupkey)
-
-
+    found = FINDER.lookup_grouped_by_feature(term)
     grouped = []
-    for groupkey in groups:
+    for groupkey, assertions in found.items():
+        direction, rel = groupkey
         base_url = '/query'
-        url = make_query_url(base_url, groupkey)
-        assertions = groups[groupkey]
-        symmetric = 'node' in dict(groupkey)
+        feature_pairs = groupkey_to_pairs(groupkey, term)
+        url = make_query_url(base_url, feature_pairs)
+        symmetric = direction == 0
         group = {
             '@id': url,
             'weight': sum(assertion['weight'] for assertion in assertions),
-            'feature': dict(groupkey),
-            'edges': assertions,
+            'feature': dict(feature_pairs),
+            'edges': assertions[:MAX_GROUP_SIZE],
             'symmetric': symmetric
         }
-        if groupkey in more:
-            view = make_paginated_view(base_url, groupkey, 0, group_limit, more=True)
+        if len(assertions) > MAX_GROUP_SIZE:
+            view = make_paginated_view(base_url, feature_pairs, 0, group_limit, more=True)
             group['view'] = view
 
         grouped.append(group)
